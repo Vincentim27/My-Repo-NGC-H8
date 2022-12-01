@@ -60,6 +60,10 @@ INSERT INTO courses (name, teachers_id, total_students)
             ('Biology', 14, 25),
             ('Calculus', 15, 20);
 
+-- No. 0
+-- Carilah dosen yang memiliki gaji tertinggi per masing-masing mata kuliah. 
+-- Tampilkan semua atribut dosen dan semua atribut mata kuliahnya. 
+-- Urutkan hasilnya berdasarkan nama mata kuliahnya secara ascending (A-Z).
 SELECT * FROM teachers
 JOIN courses ON teachers.id = courses.teachers_id
 Where (courses.name, teachers.salary) IN (
@@ -69,3 +73,61 @@ Where (courses.name, teachers.salary) IN (
   GROUP by courses.name
 )
 OrDER BY courses.name
+
+
+-- No.1 
+select b.first_name, mx.* 
+from (SELECT school,
+max(salary) AS max_sal
+from teachers
+group by school) AS mx
+join teachers b
+on mx.max_sal=b.salary 
+and mx.school=b.school
+
+-- No.2 Who is the teacher with the highest salary from Standford University
+select b.first_name, mx.* 
+from (SELECT school,
+max(salary) AS max_sal
+from teachers
+group by school) AS mx
+join teachers b
+on mx.max_sal=b.salary 
+and mx.school=b.school
+WHERE mx.school="Standford University"
+
+-- No.3 Display all courses with teacher's identity
+SELECT * FROM teachers
+LEFT JOIN courses
+  ON teachers.id = courses.teachers_id
+  where teachers_id is not null
+  order by school
+
+SELECT teachers.*,courses.name
+FROM teachers
+LEFT JOIN courses
+  ON teachers.id = courses.teachers_id
+  where teachers_id is not null
+  order by school
+
+-- No.4 Display how many courses per universities
+SELECT cr.school, count(name) AS jmlh_courses
+from
+(SELECT distinct courses.name, school
+FROM teachers
+LEFT JOIN courses
+  ON teachers.id = courses.teachers_id
+  where teachers_id is not null
+) AS cr
+group by school
+
+-- No.5 Display how many total_students per teachers
+select cr.first_name, sum(total_students) jmlh_student
+from
+(SELECT distinct courses.total_students, first_name
+FROM teachers
+LEFT JOIN courses
+  ON teachers.id = courses.teachers_id
+  where teachers_id is not null
+) cr
+group by first_name
